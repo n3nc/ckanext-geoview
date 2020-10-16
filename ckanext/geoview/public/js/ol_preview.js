@@ -75,7 +75,10 @@
         }
 
         var withLayers = function (resource, proxyUrl, proxyServiceUrl, layerProcessor, map) {
-
+            resource_locator_protocol = resource.resource_locator_protocol && resource.resource_locator_protocol.toLocaleLowerCase();
+            if (!resource.format && resource_locator_protocol && resource_locator_protocol.startsWith("ogc:")) {
+                resource.format = resource_locator_protocol.split(':')[1];
+            }
             var withLayers = ckan.geoview.layerExtractors[resource.format && resource.format.toLocaleLowerCase()];
             withLayers && withLayers(resource, proxyUrl, proxyServiceUrl, layerProcessor, map);
         }

@@ -166,7 +166,12 @@ class OLGeoView(GeoViewBase):
                 data_dict['resource']['url'])
 
         if not format_lower:
-            return False
+            resource_locator_protocol = data_dict['resource'].get('resource_locator_protocol', '').lower()
+            if resource_locator_protocol and resource_locator_protocol.startswith('ogc:'):
+                format_lower = resource_locator_protocol.split(':')[1]
+                data_dict['resource']['format'] = format_lower
+            else:
+                return False
 
         view_formats = toolkit.config.get('ckanext.geoview.ol_viewer.formats', '')
         if view_formats:
@@ -406,7 +411,7 @@ class SHPView(GeoViewBase):
 
     def can_view(self, data_dict):
         resource = data_dict['resource']
-        format_lower = resource['format'].lower()
+        format_lower = resource.get('format', '').lower()
 
         if format_lower in self.SHP:
             return self.same_domain or self.proxy_enabled
